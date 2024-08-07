@@ -19,7 +19,8 @@ export type Response = ExpressResponse;
 export type NewUserDto = {
   name: string;
   email: string;
-}
+  password: string;
+};
 
 export type UserEntity = {
   id: number;
@@ -29,12 +30,16 @@ export type UserEntity = {
 };
 
 export type NewGroupDto = {
+  ownerUserId: number;
   name: string;
+  color: string;
 };
 
 export type GroupEntity = {
   id: number;
+  ownerUserId: number;
   name: string;
+  color: string;
 };
 
 export type GroupBalanceEntity = {
