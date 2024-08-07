@@ -16,6 +16,7 @@ export default class Repository {
     const { rows } = await this.dbClient.query(USERS_INSERT, [
       user.name,
       user.email,
+      user.password,
     ]);
     return rows[0] as UserEntity;
   }
