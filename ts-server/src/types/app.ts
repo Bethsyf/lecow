@@ -42,29 +42,34 @@ export type GroupEntity = {
   color: string;
 };
 
+export interface MemberEntity {
+  groupId: number;
+  userId: number;
+}
+
 export type GroupBalanceEntity = {
   id: number;
   name: string;
   balance: string;
-}
+};
 
 export interface ExpenseEntity {
   id: number;
   groupId: number;
   userId: number;
-  description: string;
-  value: number;
-  userCount: number;
+  expenseName: string;
+  amount: number;
+  paidByUserId: number;
 }
 
 export interface NewExpenseDto {
   groupId: number;
   userId: number;
-  description: string;
-  value: string;
-  participants: number[];
+  expenseName: string;
+  amount: number;
+  paidByUserId: number;
 }
 
 export type Balance = {
   balance: string;
-}
+};

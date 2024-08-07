@@ -39,3 +39,22 @@ export const GROUP_MEMBERS_INSERT = `
 INSERT INTO groupMembers (groupId, userId)
 VALUES ($1, $2); 
 `;
+
+export const EXPENSES_INSERT = `
+INSERT INTO Expenses (groupId, userId, expenseName, amount, paidByUserId)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id, groupId, userId, expenseName, amount, paidByUserId, createdAt;
+`;
+
+export const EXPENSES_GET_BY_GROUP_ID = `
+SELECT id, groupId, userId, expenseName, amount, paidByUserId, createdAt
+FROM Expenses
+WHERE groupId = $1;
+`;
+
+export const DEBTS_GET_BY_USER_ID = `
+SELECT d.id, d.expenseId, d.userId, d.amountDue, e.expenseName, e.amount
+FROM Debts d
+JOIN Expenses e ON d.expenseId = e.id
+WHERE d.userId = $1;
+`;

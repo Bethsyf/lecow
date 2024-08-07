@@ -1,4 +1,4 @@
-import { Request, Response, GroupEntity } from "../types/app";
+import { Request, Response, GroupEntity, MemberEntity } from "../types/app";
 import Service from "../services/groups";
 import { HTTP_CREATED, HTTP_OK } from "../lib/httpCodes";
 
@@ -23,7 +23,7 @@ export async function getAllMembers(req: Request, res: Response) {
 
 export async function addMember(req: Request, res: Response) {
   const service = new Service(req.dbClient);
-  const { groupId, userId } = req.body;
+  const { groupId, userId } = req.body as MemberEntity;
   await service.addMember(Number(groupId), Number(userId));
   res.status(HTTP_CREATED).send();
 }
