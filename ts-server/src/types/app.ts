@@ -60,6 +60,7 @@ export interface ExpenseEntity {
   expenseName: string;
   amount: number;
   paidByUserId: number;
+  participants: number[];
 }
 
 export interface NewExpenseDto {
@@ -68,6 +69,7 @@ export interface NewExpenseDto {
   expenseName: string;
   amount: number;
   paidByUserId: number;
+  participants: number[];
 }
 
 export type Balance = {

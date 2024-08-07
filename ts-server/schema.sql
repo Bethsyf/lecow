@@ -32,6 +32,7 @@ CREATE TABLE Expenses (
     expenseName VARCHAR(100) NOT NULL,
     amount DECIMAL(22, 2) NOT NULL CHECK (amount > 0),
     paidByUserId INTEGER NOT NULL,
+    participants JSON NOT NULL,
     createdAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id),
     FOREIGN KEY(groupId) REFERENCES Groups(id) ON DELETE CASCADE,

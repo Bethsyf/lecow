@@ -15,4 +15,8 @@ export default class ExpenseService {
   async createExpense(expense: ExpenseEntity): Promise<ExpenseEntity> {
     return await this.expenseRepo.createExpense(expense);
   }
+
+  async getDebtsByUserId(userId: number): Promise<ExpenseEntity[]> {
+    return await this.expenseRepo.getDebtsByUserId(userId);
+  }
 }

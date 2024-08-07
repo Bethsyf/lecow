@@ -12,7 +12,7 @@ import {
   connectDatabase,
   rollbackDatabase,
 } from "./lib/database.middleware";
-import { createExpense, getExpensesByGroup } from "./controllers/expenses";
+import { createExpense, getDebtsByUserId, getExpensesByGroup } from "./controllers/expenses";
 
 const router = Router();
 
@@ -28,6 +28,7 @@ router.get("/api/v1/groups/members/:groupId", continuator(getAllMembers));
 router.post("/api/v1/groups/members", continuator(addMember));
 router.get("/api/v1/expenses/:groupId", continuator(getExpensesByGroup));
 router.post("/api/v1/expenses", continuator(createExpense));
+router.get("/api/v1/expenses/debts/:userId", continuator(getDebtsByUserId));
 
 // keep this at the end
 router.use(commitDatabase as RequestHandler);
