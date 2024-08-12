@@ -1,4 +1,5 @@
 import { omit } from "lodash";
+import { expect } from "expect";
 import { HTTP_CREATED, HTTP_OK } from "../../src/lib/httpCodes";
 import {
   NewUserDto,

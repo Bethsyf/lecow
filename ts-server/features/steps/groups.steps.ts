@@ -1,22 +1,13 @@
-import { loadFeature, defineFeature } from "jest-cucumber";
-import Context, { GroupCtx } from "./context";
+import { When, Then } from '@cucumber/cucumber';
+import Context from "./context";
 
-const feature = loadFeature("features/groups.feature");
-defineFeature(feature, (test) => {
-  test("create a group", ({ when, then }) => {
-    const ctx = new Context();
-    let result: GroupCtx | undefined;
-    when(
-      /^a group creation with name "(.*)" is requested$/,
-      async (name: string) => {
-        result = await ctx.createGroup(name, {
-          noValidate: true,
-        });
-      },
-    );
-
-    then("group is created correctly", () => {
-      ctx.validateGroupCtx(result);
-    });
+When('a group creation with name {string} is requested', async function (name: string) {
+  this.ctx = new Context();
+  this.result = await this.ctx.createGroup(name, {
+    noValidate: true,
   });
+});
+
+Then('group is created correctly', async function () {
+  this.ctx.validateGroupCtx(this.result);
 });

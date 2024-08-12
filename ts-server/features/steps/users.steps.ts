@@ -1,23 +1,14 @@
-import { loadFeature, defineFeature } from "jest-cucumber";
-import Context, { UserCtx } from "./context";
+import { When, Then } from '@cucumber/cucumber';
+import Context from "./context";
 
-const feature = loadFeature("features/users.feature");
-defineFeature(feature, (test) => {
-  test("create an user", ({ when, then }) => {
-    const ctx = new Context();
-    let result: UserCtx | undefined;
-    when(
-      /^a user creation with name "(.*)" and email "(.*)" is requested$/,
-      async (name: string, email: string) => {
-        result = await ctx.createUser(name, email, {
-          recordId: email,
-          noValidate: true,
-        });
-      },
-    );
-
-    then("user is created correctly", () => {
-      ctx.validateUserCtx(result);
-    });
+When('a user creation with name {string} and email {string} is requested', async function (name: string, email: string) {
+  this.ctx = new Context();
+  this.result = await this.ctx.createUser(name, email, {
+    recordId: email,
+    noValidate: true,
   });
+});
+
+Then('user is created correctly', async function () {
+  this.ctx.validateUserCtx(this.result);
 });

@@ -1,61 +1,20 @@
-import { loadFeature, defineFeature } from "jest-cucumber";
-import { HTTP_CONFLICT, HTTP_CREATED } from "../../src/lib/httpCodes";
-import Context, { CreateUser, CreateGroup } from "./context";
+import { Given, When, Then } from '@cucumber/cucumber';
+import Context, { CreateGroup, CreateUser } from "./context";
+import { HTTP_CONFLICT, HTTP_CREATED } from '../../src/lib/httpCodes';
 
-const feature = loadFeature("features/invites.feature");
-defineFeature(feature, (test) => {
-  test("Invite a user to group", ({ given, and, when, then }) => {
-    const ctx = new Context();
-    given("created users:", async (table: CreateUser[]) => {
-      await ctx.createUsers(table);
-    });
+Given('created users:', async function (table) {
+  this.ctx = new Context();
+  await this.ctx.createUsers(table.hashes() as CreateUser[])
+});
 
-    and("created groups:", async (table: CreateGroup[]) => {
-      await ctx.createGroups(table);
-    });
+Given('created groups:', async function (table) {
+  await this.ctx.createGroups(table.hashes() as CreateGroup[])
+});
 
-    when(
-      /^user "(.+)" is invited to group "(.+)"$/,
-      async (user: string, group: string) => {
-        await ctx.invite(user, group);
-      },
-    );
+When('user {string} is invited to group {string}', async function (user, group) {
+  await this.ctx.invite(user, group);
+});
 
-    then(/^the invite was successful$/, () => {
-      ctx.wasLastInvite(HTTP_CREATED);
-    });
-  });
-
-  test("User already invited", ({ given, and, when, then }) => {
-    const ctx = new Context();
-    given("created users:", async (table: CreateUser[]) => {
-      await ctx.createUsers(table);
-    });
-
-    and("created groups:", async (table: CreateGroup[]) => {
-      await ctx.createGroups(table);
-    });
-
-    when(
-      /^user "(.+)" is invited to group "(.+)"$/,
-      async (user: string, group: string) => {
-        await ctx.invite(user, group);
-      },
-    );
-
-    then(/^the invite was successful$/, () => {
-      ctx.wasLastInvite(HTTP_CREATED);
-    });
-
-    when(
-      /^user "(.+)" is invited again to group "(.+)"$/,
-      async (user: string, group: string) => {
-        await ctx.invite(user, group);
-      },
-    );
-
-    then("the invite was not successful", () => {
-      ctx.wasLastInvite(HTTP_CONFLICT);
-    });
-  });
+Then(/^the invite was( ?.*) successful$/, async function (ok) {
+  this.ctx.wasLastInvite(ok.match(/not/) ? HTTP_CONFLICT : HTTP_CREATED);
 });
