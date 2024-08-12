@@ -1,18 +1,18 @@
 CREATE TABLE Users (
-    id SERIAL,
+    id SERIAL NOT NULL,
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(50) NOT NULL,
+    email VARCHAR(200) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
-    createdAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMP NOT NULL DEFAULT NOW()
     PRIMARY KEY(id)
 );
 
 CREATE TABLE Groups (
-    id SERIAL,
+    id SERIAL NOT NULL,
     ownerUserId INTEGER NOT NULL,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     color VARCHAR(50),
-    createdAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMP NOT NULL DEFAULT NOW()
     PRIMARY KEY(id),
     FOREIGN KEY(ownerUserId) REFERENCES Users(id)
 );
@@ -25,67 +25,29 @@ CREATE TABLE GroupMembers (
     FOREIGN KEY(userId) REFERENCES Users(id) ON DELETE CASCADE
 );
 
+CREATE UNIQUE INDEX GroupMembersPk on GroupMembers (groupId, userId)
+
 CREATE TABLE Expenses (
-    id SERIAL,
+    id SERIAL NOT NULL,
     groupId INTEGER NOT NULL,
     userId INTEGER NOT NULL,
     expenseName VARCHAR(100) NOT NULL,
     amount DECIMAL(22, 2) NOT NULL CHECK (amount > 0),
     paidByUserId INTEGER NOT NULL,
-    participants JSON NOT NULL,
-    createdAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    participants INTEGER NOT NULL CHECK (participants > 0),
+    createdAt TIMESTAMP NOT NULL DEFAULT NOW()
     PRIMARY KEY(id),
-    FOREIGN KEY(groupId) REFERENCES Groups(id) ON DELETE CASCADE,
-    FOREIGN KEY(userId) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY(paidByUserId) REFERENCES Users(id) ON DELETE CASCADE
+    FOREIGN KEY(groupId) REFERENCES Groups(id),
+    FOREIGN KEY(userId) REFERENCES Users(id),
+    FOREIGN KEY(paidByUserId) REFERENCES Users(id)
 );
 
-CREATE TABLE Debts (
-    id SERIAL,
+CREATE TABLE Balances (
+    id SERIAL NOT NULL,
     expenseId INTEGER NOT NULL,
     userId INTEGER NOT NULL,
-    amountDue DECIMAL(22, 2) NOT NULL,
+    amountDue DECIMAL(22, 2) NOT NULL CHECK (BALANCE <> 0),
     PRIMARY KEY(id),
-    FOREIGN KEY(expenseId) REFERENCES Expenses(id) ON DELETE CASCADE,
-    FOREIGN KEY(userId) REFERENCES Users(id) ON DELETE CASCADE
+    FOREIGN KEY(expenseId) REFERENCES Expenses(id),
+    FOREIGN KEY(userId) REFERENCES Users(id)
 );
-
-CREATE OR REPLACE FUNCTION distribute_expense_debts()
-RETURNS TRIGGER AS $$
-DECLARE
-    total_amount NUMERIC; -- Monto total del gasto
-    participants_count INTEGER; -- Número de participantes
-    amount_per_participant NUMERIC; -- Monto por participante
-    participant RECORD; -- Variable para iterar sobre participantes
-BEGIN
-    -- Obtener el monto total del gasto
-    SELECT amount INTO total_amount FROM Expenses WHERE id = NEW.id;
-
-    -- Contar el número de participantes en el grupo
-    SELECT COUNT(userId) INTO participants_count 
-    FROM GroupMembers 
-    WHERE groupId = (SELECT groupId FROM Expenses WHERE id = NEW.id);
-
-    -- Calcular la cantidad a deber por participante
-    amount_per_participant = total_amount / participants_count;
-
-    -- Insertar deudas para cada participante
-    FOR participant IN
-        SELECT userId FROM GroupMembers 
-        WHERE groupId = (SELECT groupId FROM Expenses WHERE id = NEW.id)
-    LOOP
-        INSERT INTO Debts (expenseId, userId, amountDue)
-        VALUES (NEW.id, participant.userId, CASE
-            WHEN participant.userId = NEW.paidByUserId THEN amount_per_participant * (participants_count - 1)
-            ELSE -amount_per_participant
-        END);
-    END LOOP;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;  
-
-CREATE TRIGGER after_expense_insert
-AFTER INSERT ON Expenses
-FOR EACH ROW
-EXECUTE FUNCTION distribute_expense_debts();
