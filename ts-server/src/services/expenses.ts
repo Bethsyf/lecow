@@ -19,4 +19,8 @@ export default class ExpenseService {
   async getBalancesByUserId(userId: number): Promise<ExpenseEntity[]> {
     return await this.expenseRepo.getBalancesByUserId(userId);
   }
+
+  async getBalancesByGroupId(groupId: number): Promise<ExpenseEntity[]> {
+    return await this.expenseRepo.getBalancesByGroupId(groupId);
+  }
 }

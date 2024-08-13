@@ -42,14 +42,14 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/User'
-  /users/{id}/balance:
+  /expenses/balances/{userId}:
     get:
       description: Get user balance across all groups, positivalues means in favor, negative values means in debt
       tags:
         - balance
       parameters:
         - in: path
-          name: id
+          name: userId
           required: true
           schema:
             type: integer
@@ -76,14 +76,14 @@ paths:
                   description: No credit nor debt
                   value:
                     balance: 0.0
-  /users/{id}/groups:
+  /expenses/total-balances/{groupId}:
     get:
       description: get all groups where user belongs to with balance
       tags:
         - balance
       parameters:
         - in: path
-          name: id
+          name: groupId
           required: true
           schema:
             type: integer

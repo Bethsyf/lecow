@@ -28,7 +28,7 @@ CREATE TABLE Expenses (
     expenseName VARCHAR(100) NOT NULL,
     amount DECIMAL(22, 2) NOT NULL CHECK (amount > 0),
     paidByUserId INTEGER NOT NULL,
-    participants JSON NOT NULL,
+    participants JSONB NOT NULL,
     createdAt TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY(groupId) REFERENCES Groups(id),
     FOREIGN KEY(userId) REFERENCES Users(id),

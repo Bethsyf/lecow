@@ -49,7 +49,7 @@ export interface ExpenseEntity {
   expenseName: string;
   amount: number;
   paidByUserId: number;
-  participants: number;
+  participants: number[];
 }
 
 export interface NewExpenseDto {

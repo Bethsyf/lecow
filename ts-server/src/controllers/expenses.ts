@@ -21,3 +21,10 @@ export async function getBalancesByUserId(req: Request, res: Response) {
     const balances = await service.getBalancesByUserId(userId);
     res.status(HTTP_OK).json(balances);
 }
+
+export async function getBalancesByGroupId(req: Request, res: Response) {
+  const service = new ExpenseService(req.dbClient);
+  const groupId = parseInt(req.params.groupId, 10);
+    const balances = await service.getBalancesByGroupId(groupId);
+    res.status(HTTP_OK).json(balances);
+}

@@ -95,3 +95,15 @@ FROM Balances d
 JOIN Expenses e ON d.expenseId = e.id
 WHERE d.userId = $1;
 `;
+
+export const BALANCES_GET_BY_GROUP_ID = `
+SELECT
+    groupId,
+    SUM(amount) AS totalExpenses
+FROM
+    Expenses
+WHERE
+    groupId = $1
+GROUP BY
+    groupId;
+`;
