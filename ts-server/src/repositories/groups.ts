@@ -19,9 +19,7 @@ export default class Repository {
 
   async create(group: GroupEntity): Promise<GroupEntity> {
     const { rows } = await this.dbClient.query(GROUPS_INSERT, [
-      group.ownerUserId,
       group.name,
-      group.color,
     ]);
     return rows[0] as GroupEntity;
   }

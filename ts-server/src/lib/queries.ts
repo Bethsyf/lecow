@@ -3,23 +3,23 @@
  */
 
 export const USERS_GET_ALL = `
-SELECT id, name, email, password FROM users;
+SELECT id, name, email FROM users;
 `;
 
 export const USERS_INSERT = `
-INSERT INTO users (name, email, password)
-VALUES ($1, $2, $3)
+INSERT INTO users (name, email)
+VALUES ($1, $2)
 RETURNING id, name, email;
 `;
 
 export const GROUPS_GET_ALL = `
-SELECT id, name, COLOR FROM groups;
+SELECT id, name FROM groups;
 `;
 
 export const GROUPS_INSERT = `
-INSERT INTO groups (ownerUserId, name, color)
-VALUES ($1, $2, $3)
-RETURNING name, color;
+INSERT INTO groups (name)
+VALUES ($1)
+RETURNING name;
 `;
 
 export const GROUP_MEMBERS_GET_BY_GROUP_ID = `

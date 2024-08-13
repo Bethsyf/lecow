@@ -199,12 +199,9 @@ components:
           type: string
         email:
           type: string
-        password: 
-          type: string
       example:
         name: Some Rabbit
         email: somerabbit@example.com
-        password: somepassword
     User:
       allOf:
         - type: object
@@ -221,14 +218,8 @@ components:
       properties:
         name:
           type: string
-        color: 
-          type: string
-        ownerUserId:
-          type: integer
       example:
         name: Some Group
-        color: blue
-        ownerUserId: 1
     Group:
       allOf:
         - type: object
