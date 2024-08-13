@@ -1,4 +1,4 @@
-import { EXPENSES_INSERT, EXPENSES_GET_BY_GROUP_ID, DEBTS_GET_BY_USER_ID } from "../lib/queries";
+import { EXPENSES_INSERT, EXPENSES_GET_BY_GROUP_ID, BALANCES_GET_BY_USER_ID } from "../lib/queries";
 import { Database, ExpenseEntity } from "../types/app";
 
 export default class ExpenseRepository {
@@ -26,8 +26,8 @@ export default class ExpenseRepository {
     return rows[0] as ExpenseEntity;
   }
 
-  async getDebtsByUserId(userId: number): Promise<ExpenseEntity[]> {
-    const { rows } = await this.dbClient.query(DEBTS_GET_BY_USER_ID, [userId]);
+  async getBalancesByUserId(userId: number): Promise<ExpenseEntity[]> {
+    const { rows } = await this.dbClient.query(BALANCES_GET_BY_USER_ID, [userId]);
     return rows as ExpenseEntity[];
   }
 }

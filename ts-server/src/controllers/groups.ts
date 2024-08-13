@@ -25,5 +25,5 @@ export async function addMember(req: Request, res: Response) {
   const service = new Service(req.dbClient);
   const { groupId, userId } = req.body as MemberEntity;
   await service.addMember(Number(groupId), Number(userId));
-  res.status(HTTP_CREATED).send();
+  res.status(HTTP_CREATED).send(`user with id=${userId} already added to the group with id=${groupId} `);
 }

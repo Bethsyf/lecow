@@ -24,7 +24,7 @@ export type CreateExpense = {
   user: string;
   group: string;
   description: string;
-  amount: string;
+  amount: number;
   participants: string[];
 };
 
@@ -101,6 +101,7 @@ export default class Context {
   async createUser(
     nametpl: string,
     emailtpl: string,
+    passwordtpl: string,
     opts: CreateOpts = {
       noValidate: false,
     },
@@ -108,6 +109,7 @@ export default class Context {
     const input = {
       name: this.replace(nametpl),
       email: this.replace(emailtpl),
+      password: this.replace(passwordtpl),
     };
     const id = opts.recordId ?? input.email;
     const response = await fetch(Context.usersUrl, {
@@ -130,12 +132,16 @@ export default class Context {
 
   async createGroup(
     nametpl: string,
+    ownerUserId: number,
+    colortpl: string,
     opts: CreateOpts = {
       noValidate: false,
     },
   ) {
     const input = {
       name: this.replace(nametpl),
+      ownerUserId: ownerUserId,
+      color: this.replace(colortpl),
     };
     const id = opts.recordId ?? input.name;
     const response = await fetch(Context.groupsUrl, {
@@ -169,13 +175,14 @@ export default class Context {
     const input: NewExpenseDto = {
       groupId: groupId!,
       userId: userId!,
-      description: expense.description,
-      value: expense.amount,
+      expenseName: expense.description,
+      amount: expense.amount,
       participants: expense.participants.map((p) => {
         const id = this.users[this.replace(p)].result?.id;
         expect(id).toBeDefined();
         return id!;
       }),
+      paidByUserId: 1
     };
     const url = `${Context.baseUrl}/groups/${groupId}/users/${userId}/expenses`;
     const response = await fetch(url, {
@@ -202,7 +209,7 @@ export default class Context {
     for (let index = 0; index < data.length; index++) {
       const id = data[index].user;
       const key = toKey(id);
-      const r = await this.createUser(`u${key}`, `u${key}@lecow.com`, {
+      const r = await this.createUser(`u${key}`, `u${key}@lecow.com`, `password${key}`, {
         recordId: id,
       });
       results.push(r);
@@ -214,7 +221,7 @@ export default class Context {
     for (let index = 0; index < data.length; index++) {
       const id = data[index].group;
       const key = toKey(id);
-      await this.createGroup(`g${key}`, {
+      await this.createGroup(`g${key}`, 1, `blue`, {
         recordId: id,
       });
     }

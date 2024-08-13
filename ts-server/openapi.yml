@@ -124,45 +124,56 @@ paths:
                 - $ref: '#/components/schemas/NewGroup'
               required:
                 - name
-  /groups/{groupId}/users/{userId}:
-    post:
-      description: Add a user to a group
+  /groups/members/{groupId}:
+    get:
+      description: Get all members of a group
       tags:
-        - invites
+        - members
       parameters:
         - in: path
           name: groupId
           required: true
           schema:
             type: integer
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: integer
+      responses:
+        '200':
+          description: OK
+         
+        '404':
+          description: Group does not exist
+
+  /groups/members:
+    post:
+      description: Add a user to a group
+      tags:
+        - members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupId:
+                  type: integer
+                userId:
+                  type: integer
+              required:
+                - groupId
+                - userId
       responses:
         '201':
           description: User added to group
         '409':
           description: User already added
         '404':
-          description: Group or User does no exists
-  /groups/{groupId}/users/{userId}/expenses:
-    post:
+          description: Group or User does not exist
+
+  /expenses:
+     post:
       description: Create an expense in the group
       tags:
         - expenses
-      parameters:
-        - in: path
-          name: groupId
-          required: true
-          schema:
-            type: integer
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: integer
       requestBody:
         required: true
         content:
@@ -188,9 +199,12 @@ components:
           type: string
         email:
           type: string
+        password: 
+          type: string
       example:
         name: Some Rabbit
         email: somerabbit@example.com
+        password: somepassword
     User:
       allOf:
         - type: object
@@ -207,6 +221,14 @@ components:
       properties:
         name:
           type: string
+        color: 
+          type: string
+        ownerUserId:
+          type: integer
+      example:
+        name: Some Group
+        color: blue
+        ownerUserId: 1
     Group:
       allOf:
         - type: object
@@ -217,27 +239,39 @@ components:
     NewExpense:
       type: object
       properties:
-        description:
+        groupId:
+          type: integer
+        userId:
+          type: integer
+        expenseName:
           type: string
-        value:
+        amount:
           type: number
+        paidByUserId:
+          type: integer
         participants:
-          description: User ids
+          description: List of participant user objects
           type: array
           items:
-            type: integer
-          uniqueItems: true
+            type: object
+            properties:
+              userId:
+                type: integer
           minItems: 1
       required:
-        - description
-        - value
+        - groupId
+        - userId
+        - expenseName
+        - amount
+        - paidByUserId
         - participants
       example:
-        description: 'some chill out'
-        value: 90000
+        groupId: 1
+        userId: 1
+        expenseName: 'salida al parque'
+        amount: 60000
+        paidByUserId: 1
         participants:
-          - 1
-          - 2
-          - 3
-
-      
+          - userId: 1
+          - userId: 2
+          - userId: 3

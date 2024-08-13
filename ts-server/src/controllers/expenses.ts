@@ -15,9 +15,9 @@ export async function createExpense(req: Request, res: Response) {
   res.status(HTTP_CREATED).json(newExpense);
 }
 
-export async function getDebtsByUserId(req: Request, res: Response) {
+export async function getBalancesByUserId(req: Request, res: Response) {
   const service = new ExpenseService(req.dbClient);
   const userId = parseInt(req.params.userId, 10);
-    const debts = await service.getDebtsByUserId(userId);
-    res.status(HTTP_OK).json(debts);
+    const balances = await service.getBalancesByUserId(userId);
+    res.status(HTTP_OK).json(balances);
 }

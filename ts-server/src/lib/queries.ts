@@ -41,9 +41,46 @@ VALUES ($1, $2);
 `;
 
 export const EXPENSES_INSERT = `
-INSERT INTO Expenses (groupId, userId, expenseName, amount, paidByUserId, participants)
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, groupId, userId, expenseName, amount, paidByUserId, participants, createdAt;
+WITH new_expense AS (
+    INSERT INTO Expenses (groupId, userId, expenseName, amount, paidByUserId, participants)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING id, groupId, userId, expenseName, amount, paidByUserId, participants, createdAt
+),
+participant_balances AS (
+    SELECT 
+        (p.value->>'userId')::INTEGER AS userId,
+        (ne.amount / jsonb_array_length(ne.participants)) AS share
+    FROM new_expense ne
+    JOIN LATERAL jsonb_array_elements(ne.participants) AS p(value) ON true
+),
+payer_balance AS (
+    SELECT 
+        ne.id AS expenseId,
+        ne.amount - (ne.amount / jsonb_array_length(ne.participants)) AS amountDue
+    FROM new_expense ne
+    WHERE ne.paidByUserId = $5
+)
+INSERT INTO Balances (expenseId, userId, amountDue)
+SELECT 
+    ne.id AS expenseId,
+    p.userId,
+    CASE
+        WHEN p.userId = $5 THEN
+            ps.amountDue  
+        ELSE
+            - p.share 
+    END AS amountDue
+FROM new_expense ne
+JOIN participant_balances p ON p.userId = p.userId
+LEFT JOIN payer_balance ps ON ps.expenseId = ne.id
+WHERE p.userId != $5
+UNION ALL
+SELECT 
+    ne.id AS expenseId,
+    $5 AS userId,
+    ps.amountDue
+FROM new_expense ne
+JOIN payer_balance ps ON ps.expenseId = ne.id
 `;
 
 export const EXPENSES_GET_BY_GROUP_ID = `
@@ -52,9 +89,9 @@ FROM Expenses
 WHERE groupId = $1;
 `;
 
-export const DEBTS_GET_BY_USER_ID = `
+export const BALANCES_GET_BY_USER_ID = `
 SELECT d.id, d.expenseId, d.userId, d.amountDue, e.expenseName, e.amount, paidByUserId, participants
-FROM Debts d
+FROM Balances d
 JOIN Expenses e ON d.expenseId = e.id
 WHERE d.userId = $1;
 `;
