@@ -19,7 +19,7 @@ SELECT id, name FROM groups;
 export const GROUPS_INSERT = `
 INSERT INTO groups (name)
 VALUES ($1)
-RETURNING name;
+RETURNING id, name ;
 `;
 
 export const GROUP_MEMBERS_GET_BY_GROUP_ID = `
@@ -42,9 +42,9 @@ VALUES ($1, $2);
 
 export const EXPENSES_INSERT = `
 WITH new_expense AS (
-    INSERT INTO Expenses (groupId, userId, expenseName, amount, paidByUserId, participants)
+    INSERT INTO Expenses (groupId, userId, description, amount, paidByUserId, participants)
     VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING id, groupId, userId, expenseName, amount, paidByUserId, participants, createdAt
+    RETURNING id, groupId, userId, description, amount, paidByUserId, participants, createdAt
 ),
 participant_balances AS (
     SELECT 
@@ -84,13 +84,13 @@ JOIN payer_balance ps ON ps.expenseId = ne.id
 `;
 
 export const EXPENSES_GET_BY_GROUP_ID = `
-SELECT id, groupId, userId, expenseName, amount, paidByUserId, participants, createdAt
+SELECT id, groupId, userId, description, amount, paidByUserId, participants, createdAt
 FROM Expenses
 WHERE groupId = $1;
 `;
 
 export const BALANCES_GET_BY_USER_ID = `
-SELECT d.id, d.expenseId, d.userId, d.amountDue, e.expenseName, e.amount, paidByUserId, participants
+SELECT d.id, d.expenseId, d.userId, d.amountDue, e.description, e.amount, paidByUserId, participants
 FROM Balances d
 JOIN Expenses e ON d.expenseId = e.id
 WHERE d.userId = $1;

@@ -42,14 +42,14 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/User'
-  /expenses/balances/{userId}:
+  /users/{id}/balance:
     get:
       description: Get user balance across all groups, positivalues means in favor, negative values means in debt
       tags:
         - balance
       parameters:
         - in: path
-          name: userId
+          name: id
           required: true
           schema:
             type: integer
@@ -76,14 +76,14 @@ paths:
                   description: No credit nor debt
                   value:
                     balance: 0.0
-  /expenses/total-balances/{groupId}:
+  /users/{id}/groups:
     get:
       description: get all groups where user belongs to with balance
       tags:
         - balance
       parameters:
         - in: path
-          name: groupId
+          name: id
           required: true
           schema:
             type: integer
@@ -124,56 +124,45 @@ paths:
                 - $ref: '#/components/schemas/NewGroup'
               required:
                 - name
-  /groups/members/{groupId}:
-    get:
-      description: Get all members of a group
+  /groups/{groupId}/users/{userId}:
+    post:
+      description: Add a user to a group
       tags:
-        - members
+        - invites
       parameters:
         - in: path
           name: groupId
           required: true
           schema:
             type: integer
-      responses:
-        '200':
-          description: OK
-         
-        '404':
-          description: Group does not exist
-
-  /groups/members:
-    post:
-      description: Add a user to a group
-      tags:
-        - members
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                groupId:
-                  type: integer
-                userId:
-                  type: integer
-              required:
-                - groupId
-                - userId
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
       responses:
         '201':
           description: User added to group
         '409':
           description: User already added
         '404':
-          description: Group or User does not exist
-
-  /expenses:
-     post:
+          description: Group or User does no exists
+  /groups/{groupId}/users/{userId}/expenses:
+    post:
       description: Create an expense in the group
       tags:
         - expenses
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
@@ -218,8 +207,6 @@ components:
       properties:
         name:
           type: string
-      example:
-        name: Some Group
     Group:
       allOf:
         - type: object
@@ -230,39 +217,27 @@ components:
     NewExpense:
       type: object
       properties:
-        groupId:
-          type: integer
-        userId:
-          type: integer
-        expenseName:
+        description:
           type: string
-        amount:
+        value:
           type: number
-        paidByUserId:
-          type: integer
         participants:
-          description: List of participant user objects
+          description: User ids
           type: array
           items:
-            type: object
-            properties:
-              userId:
-                type: integer
+            type: integer
+          uniqueItems: true
           minItems: 1
       required:
-        - groupId
-        - userId
-        - expenseName
-        - amount
-        - paidByUserId
+        - description
+        - value
         - participants
       example:
-        groupId: 1
-        userId: 1
-        expenseName: 'salida al parque'
-        amount: 60000
-        paidByUserId: 1
+        description: 'some chill out'
+        value: 90000
         participants:
-          - userId: 1
-          - userId: 2
-          - userId: 3
+          - 1
+          - 2
+          - 3
+
+      

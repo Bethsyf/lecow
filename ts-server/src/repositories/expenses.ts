@@ -18,10 +18,9 @@ export default class ExpenseRepository {
     const { rows } = await this.dbClient.query(EXPENSES_INSERT, [
       expense.groupId,
       expense.userId,
-      expense.expenseName,
-      expense.amount,
-      expense.paidByUserId,
-      JSON.stringify(expense.participants),
+      expense.description,
+      expense.value,
+      JSON.stringify(expense.userCount),
     ]);
     return rows[0] as ExpenseEntity;
   }

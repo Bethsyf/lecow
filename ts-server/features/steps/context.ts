@@ -23,9 +23,8 @@ export type CreateGroup = {
 export type CreateExpense = {
   user: string;
   group: string;
-  expenseName: string;
+  description: string;
   amount: string;
-  paidByUserId: number;
   participants: string[];
 };
 
@@ -170,9 +169,8 @@ export default class Context {
     const input: NewExpenseDto = {
       groupId: groupId!,
       userId: userId!,
-      expenseName: expense.expenseName,
-      amount: expense.amount,
-      paidByUserId: expense.paidByUserId,
+      description: expense.description,
+      value: expense.amount,
       participants: expense.participants.map((p) => {
         const id = this.users[this.replace(p)].result?.id;
         expect(id).toBeDefined();

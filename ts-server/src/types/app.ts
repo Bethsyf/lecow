@@ -46,18 +46,16 @@ export interface ExpenseEntity {
   id: number;
   groupId: number;
   userId: number;
-  expenseName: string;
-  amount: number;
-  paidByUserId: number;
-  participants: number[];
+  description: string;
+  value: number;
+  userCount: number;
 }
 
 export interface NewExpenseDto {
   groupId: number;
   userId: number;
-  expenseName: string;
-  amount: string;
-  paidByUserId: number;
+  description: string;
+  value: string;
   participants: number[];
 }
 

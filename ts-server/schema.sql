@@ -19,8 +19,6 @@ CREATE TABLE GroupMembers (
     FOREIGN KEY(userId) REFERENCES Users(id)
 );
 
-CREATE UNIQUE INDEX GroupMembersPk on GroupMembers (groupId, userId);
-
 CREATE TABLE Expenses (
     id SERIAL NOT NULL PRIMARY KEY,
     groupId INTEGER NOT NULL,

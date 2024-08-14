@@ -19,7 +19,18 @@ export default class Service {
     return await this.groupRepo.getAllMembers(groupId);
   }
 
-  async addMember(groupId: number, userId: number): Promise<void> {
-    await this.groupRepo.addMember(groupId, userId);
+  async addMember(groupId: number, userId: number): Promise<boolean> {
+    try {
+      await this.groupRepo.addMember(groupId, userId);
+      return true;
+    } catch (error) {
+      const msg = (error as Error).message ?? '';
+      if(msg.startsWith('duplicate key value')){
+        return false;
+      }
+      else {
+        throw error;
+      }
+    }
   }
 }

@@ -18,19 +18,20 @@ const router = Router();
 
 // keep this at the beginning
 router.use(connectDatabase as RequestHandler);
-
+      
 // app routers below
+
+router.post("/api/v1/groups/:groupId/users/:userId", continuator(addMember));
 router.get("/api/v1/users", continuator(getAllUsers));
 router.post("/api/v1/users", continuator(createUser));
 router.get("/api/v1/groups", continuator(getAllGroups));
 router.post("/api/v1/groups", continuator(createGroup));
-router.get("/api/v1/groups/members/:groupId", continuator(getAllMembers));
-router.post("/api/v1/groups/members", continuator(addMember));
+router.get("/api/v2/members/:groupId", continuator(getAllMembers));
 router.get("/api/v1/expenses/:groupId", continuator(getExpensesByGroup));
 router.post("/api/v1/expenses", continuator(createExpense));
 router.get("/api/v1/expenses/balances/:userId", continuator(getBalancesByUserId));
 router.get("/api/v1/expenses/total-balances/:groupId", continuator(getBalancesByGroupId));
-
+ 
 // keep this at the end
 router.use(commitDatabase as RequestHandler);
 router.use(rollbackDatabase as ErrorRequestHandler);

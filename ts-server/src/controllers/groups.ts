@@ -1,6 +1,6 @@
 import { Request, Response, GroupEntity } from "../types/app";
 import Service from "../services/groups";
-import { HTTP_CREATED, HTTP_OK } from "../lib/httpCodes";
+import { HTTP_CONFLICT, HTTP_CREATED, HTTP_OK } from "../lib/httpCodes";
 
 export async function getAllGroups(req: Request, res: Response) {
   const service = new Service(req.dbClient);
@@ -23,7 +23,8 @@ export async function getAllMembers(req: Request, res: Response) {
 
 export async function addMember(req: Request, res: Response) {
   const service = new Service(req.dbClient);
-  const { groupId, userId } = req.body ;
-  await service.addMember(Number(groupId), Number(userId));
-  res.status(HTTP_CREATED).send(`user with id=${userId} already added to the group with id=${groupId} `);
+  const { groupId, userId } = req.params ;
+  const result = await service.addMember(Number(groupId), Number(userId));
+  if (result){res.status(HTTP_CREATED)}
+  else {res.status(HTTP_CONFLICT)}
 }
