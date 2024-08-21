@@ -11,7 +11,13 @@ export async function getExpensesByGroup(req: Request, res: Response) {
 
 export async function createExpense(req: Request, res: Response) {
   const service = new ExpenseService(req.dbClient);
-  const newExpense = await service.createExpense(req.body as ExpenseEntity);
+  const { groupId, userId } = req.params;
+  const expenseData = {
+    ...req.body,
+    groupId: Number(groupId),  
+    userId: Number(userId)   
+  };
+  const newExpense = await service.createExpense(expenseData as ExpenseEntity);
   res.status(HTTP_CREATED).json(newExpense);
 }
 

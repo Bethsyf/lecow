@@ -20,7 +20,7 @@ export default class ExpenseRepository {
       expense.userId,
       expense.description,
       expense.value,
-      JSON.stringify(expense.userCount),
+      JSON.stringify(expense.participants),
     ]);
     return rows[0] as ExpenseEntity;
   }

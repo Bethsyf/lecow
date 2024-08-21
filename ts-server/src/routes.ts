@@ -28,7 +28,7 @@ router.get("/api/v1/groups", continuator(getAllGroups));
 router.post("/api/v1/groups", continuator(createGroup));
 router.get("/api/v2/members/:groupId", continuator(getAllMembers));
 router.get("/api/v1/expenses/:groupId", continuator(getExpensesByGroup));
-router.post("/api/v1/expenses", continuator(createExpense));
+router.post("/api/v1/groups/:groupId/users/:userId/expenses", continuator(createExpense));
 router.get("/api/v1/expenses/balances/:userId", continuator(getBalancesByUserId));
 router.get("/api/v1/expenses/total-balances/:groupId", continuator(getBalancesByGroupId));
  

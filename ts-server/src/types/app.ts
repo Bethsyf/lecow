@@ -48,7 +48,7 @@ export interface ExpenseEntity {
   userId: number;
   description: string;
   value: number;
-  userCount: number;
+  participants: number[];
 }
 
 export interface NewExpenseDto {

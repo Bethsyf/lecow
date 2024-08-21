@@ -23,8 +23,11 @@ export async function getAllMembers(req: Request, res: Response) {
 
 export async function addMember(req: Request, res: Response) {
   const service = new Service(req.dbClient);
-  const { groupId, userId } = req.params ;
+  const { groupId, userId } = req.params;
   const result = await service.addMember(Number(groupId), Number(userId));
-  if (result){res.status(HTTP_CREATED)}
-  else {res.status(HTTP_CONFLICT)}
+  if (result) {
+    res.sendStatus(HTTP_CREATED);
+  } else {
+    res.sendStatus(HTTP_CONFLICT);
+  }
 }
