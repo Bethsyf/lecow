@@ -107,13 +107,13 @@ Given('users belongs to group {string}:', async function (group: string, dataTab
   this.participants = users.map((i) => i.user);
 });
 
-When('user {string} pays for {string} the value {string} in group {string}',
-  async function (user: string, description: string, value: string, group: string) {
+When('user {string} pays for {string} the amount {string} in group {string}',
+  async function (user: string, description: string, amount: string, group: string) {
     await this.ctx.createExpense({
       user,
       group,
       description,
-      value,
+      amount,
       participants: this.participants,
     });
 });
